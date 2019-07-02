@@ -1,0 +1,1283 @@
+cap log c
+clear
+clear matrix
+set more off
+
+
+/************************************************************
+
+							2015			
+							
+*************************************************************/
+
+clear
+use "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/wetransfer-57b6ec/CY6 QQQ.dta", clear
+
+* denmark 
+	tab CNTRYID if CNTRYID==208
+* finland
+	tab CNTRYID if CNTRYID==246
+* iceland
+	tab CNTRYID if CNTRYID==352
+* norway
+	tab CNTRYID if CNTRYID==578
+* sweden
+	tab CNTRYID if CNTRYID==752
+* united states
+	tab CNTRYID if CNTRYID==840
+* united kingdom
+	tab CNTRYID if CNTRYID==826
+* germany
+	tab CNTRYID if CNTRYID==276
+
+* drop unnecessary countries
+	keep if inlist(CNTRYID, 208, 246, 352, 578, 752, 840, 826, 276)
+
+* check country IDs
+	tostring CNTRYID, gen(country)
+	tab CNTRYID
+	tab country
+	gen year=2015
+
+* rename key variables
+	rename Region region
+	rename LANGTEST_QQQ language
+	rename ST001D01T schoolyear
+	rename ST003D02T birthmonth
+	rename ST003D03T birthyear
+	rename ST004D01T gender
+	rename MISCED mothereduc
+	rename FISCED fathereduc
+	rename HISCED parenteduc
+	rename ST021Q01TA immigyear
+	rename AGE age
+	rename GRADE grade
+	rename IMMIG immig
+	rename DURECEC childeduc
+	rename TMINS learningtime
+	rename BELONG belong
+	rename MOTIVAT motivation
+	rename EMOSUPS emosup
+	rename WEALTH wealth
+	rename ESCS escs
+
+	order CNTRYID CNT country CNTSTUID region language age schoolyear birthmonth birthyear gender grade immig immigyear mothereduc fathereduc parenteduc childeduc learningtime belong motivation emosup wealth escs year	
+	
+* rescan variables
+	
+	label var ST012Q05NA "How many in home: smartphones"
+	label var ST012Q06NA "How many in home: computers"
+	label var ST012Q07NA "How many in home: tablets"
+	label var ST082Q01NA "A/D I prefer working as part of a team to working alone."
+	label var ST082Q02NA "A/D I am a good listener."
+	label var ST082Q03NA "A/D I enjoy seeing my classmates be successful."
+	label var ST082Q08NA "A/D I take into account what others are interested in."
+	label var ST082Q09NA "A/D I find that teams make better decisions than individuals."
+	label var ST082Q12NA "A/D I enjoy considering different perspectives."
+	label var ST082Q13NA "A/D I find that teamwork raises my own efficiency."
+	label var ST082Q14NA "A/D I enjoy cooperating with peers."
+	
+* merge with other questionnaire
+	
+	merge 1:1 CNTSTUID using "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/wetransfer-57b6ec/QQ2 2015.dta"
+	keep if _merge==3
+	drop _merge		
+	
+* drop unnecessary variables
+	keep CNTRYID CNT country ST123Q01NA ST123Q02NA ST123Q03NA ST123Q04NA CNTSTUID ST012Q01TA ST016Q01NA ST038Q01NA ST038Q02NA ST038Q03NA ST038Q04NA ST038Q05NA ST038Q06NA ST038Q07NA ST038Q08NA age schoolyear birthmonth birthyear gender grade immig immigyear mothereduc fathereduc parenteduc childeduc learningtime belong motivation emosup wealth escs year ST012Q05NA ST012Q06NA ST012Q07NA ST082Q01NA ST082Q02NA ST082Q03NA ST082Q08NA ST082Q09NA ST082Q12NA ST082Q13NA ST082Q14NA ST034Q01TA ST034Q02TA ST034Q03TA ST034Q04TA ST034Q05TA ST034Q06TA ST032Q01NA ST032Q02NA ST076Q03NA ST076Q04NA ST076Q05NA ST076Q06NA ST076Q07NA ST076Q08NA ST078Q03NA ST078Q04NA ST078Q05NA ST078Q06NA ST078Q07NA ST078Q08NA IC001Q01TA IC001Q02TA IC001Q03TA IC001Q04TA IC001Q05TA IC001Q07TA IC002Q01NA IC003Q01TA IC004Q01TA IC006Q01TA IC007Q01TA IC008Q01TA IC008Q02TA IC008Q03TA IC008Q04TA IC008Q05TA IC008Q07NA IC008Q08TA IC008Q09TA IC008Q10TA IC008Q11TA IC008Q12TA IC008Q13NA IC010Q01TA IC010Q02NA IC010Q03TA IC010Q04TA IC010Q05NA IC010Q06NA IC010Q07TA IC010Q08TA IC010Q09NA IC010Q10NA IC010Q11NA IC010Q12NA IC011Q01TA IC011Q02TA IC011Q03TA IC011Q04TA IC011Q05TA IC011Q06TA IC011Q07TA IC011Q08TA IC011Q09TA IC013Q01NA IC013Q05NA IC013Q12NA IC013Q13NA IC015Q05NA IC016Q04NA
+
+* rename new merged variables
+
+	rename CNTSTUID ID	
+	
+labsumm 
+	
+save "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/merges/PISA2015.dta", replace
+
+
+/************************************************************
+
+							2012			
+							
+*************************************************************/
+
+clear
+use "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/wetransfer-57b6ec/INT STU12 DEC03.dta", clear
+
+* drop unnecessary countries
+	keep if inlist(CNT, "DNK", "FIN", "GBR", "USA", "DEU", "ISL", "NOR", "SWE")
+	
+	gen country=208 if CNT=="DNK"
+	replace country=246 if CNT=="FIN"
+	replace country=352 if CNT=="ISL"
+	replace country=578 if CNT=="NOR"
+	replace country=752 if CNT=="SWE"
+	replace country=840 if CNT=="USA"
+	replace country=826 if CNT=="GBR"
+	replace country=267 if CNT=="DEU"
+
+	gen year=2012
+
+* rename key variables
+	rename StIDStd ID
+		gen merge14=ST01Q01 
+		drop ST01Q01
+	rename merge14 schoolyear
+	rename ST03Q01 birthmonth
+	rename ST03Q02 birthyear
+		gen merge13=ST04Q01
+		drop ST04Q01
+	rename merge13 gender
+		gen merge12=ST21Q01 
+		drop ST21Q01
+	rename merge12 immigyear
+	rename misced mothereduc
+	rename fisced fathereduc
+	rename hisced parenteduc
+	rename AGE age
+	rename GRADE grade
+	rename IMMIG immig
+	rename BELONG belong
+	rename WEALTH wealth
+	rename ESCS escs
+
+	order CNT country ID age schoolyear birthmonth birthyear gender grade immig immigyear mothereduc fathereduc parenteduc belong wealth escs year	
+
+* drop unnecessary variables
+	keep CNT country ID age schoolyear birthmonth birthyear gender grade immig immigyear mothereduc fathereduc parenteduc belong wealth escs year ST27Q01 ST27Q02 ST27Q03 ST87Q01 ST87Q02 ST87Q03 ST87Q04 ST87Q05 ST87Q06 ST87Q07 IC01Q01 IC01Q02 IC01Q03 IC01Q04 IC01Q05 IC01Q07 IC02Q01 IC02Q02 IC02Q03 IC02Q04 IC03Q01 IC04Q01 IC05Q01 IC06Q01 IC07Q01
+	gen merge1=IC04Q01 
+		label var merge1 "First access to Internet"
+	gen merge2=IC03Q01  
+		label var merge2 "First use of computers"
+	gen merge6=IC01Q05 
+		label var merge6 "At home - Video games console"
+	gen merge7=IC01Q04 
+		label var merge7 "At home - Internet connection"
+	gen merge8=IC01Q03 
+		label var merge8 "At home - Tablet computer"
+	gen merge9=IC01Q02
+		label var merge9 "At home - portable laptop"
+	gen merge10=IC01Q01 
+		label var merge10 "At home - desktop computer"
+		
+	drop IC02Q01 IC02Q03 IC02Q02 IC04Q01 IC03Q01  IC02Q03 IC02Q02 IC02Q01 IC01Q05 IC01Q04 IC01Q03 IC01Q02 IC01Q01 
+	
+save "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/merges/PISA2012.dta", replace
+
+
+/************************************************************
+
+							2009			
+							
+*************************************************************/
+
+clear
+use "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/wetransfer-57b6ec/INT STQ09.dta", clear
+
+* drop unnecessary countries
+	keep if inlist(CNT, "DNK", "FIN", "GBR", "USA", "DEU", "ISL", "NOR", "SWE")
+	
+	gen country=208 if CNT=="DNK"
+	replace country=246 if CNT=="FIN"
+	replace country=352 if CNT=="ISL"
+	replace country=578 if CNT=="NOR"
+	replace country=752 if CNT=="SWE"
+	replace country=840 if CNT=="USA"
+	replace country=826 if CNT=="GBR"
+	replace country=267 if CNT=="DEU"
+
+	gen year=2009
+
+* rename key variables
+	rename StIDStd ID
+	rename ST01Q01 schoolyear
+	rename ST03Q02 birthmonth
+	rename ST03Q03 birthyear
+	rename ST04Q01 gender
+	rename MISCED mothereduc
+	rename FISCED fathereduc
+	rename HISCED parenteduc
+	rename AGE age
+	rename GRADE grade
+	rename IMMIG immig
+	rename WEALTH wealth
+	rename ESCS escs
+
+	order CNT country ID age schoolyear birthmonth birthyear gender grade immig mothereduc fathereduc parenteduc wealth escs year	
+
+* drop unnecessary variables
+	keep CNT country ID age schoolyear birthmonth birthyear gender grade immig mothereduc fathereduc parenteduc wealth escs year ST21Q01 ST21Q02 ST21Q03 ST26Q01 ST26Q02 ST26Q03 ST26Q04 ST26Q05 ST26Q06 ST26Q07 IC01Q01 IC01Q02 IC01Q03 IC01Q04 IC01Q05 IC02Q01 IC02Q02 IC02Q03 IC03Q01 IC04Q01 IC04Q02 IC04Q03 IC04Q04 IC04Q05 IC04Q06 IC04Q07 IC04Q08 IC04Q09 IC05Q01 IC05Q02 IC05Q03 IC05Q04 IC05Q05 IC06Q01 IC06Q02 IC06Q03 IC06Q04 IC06Q05 IC06Q06 IC06Q07 IC06Q08 IC06Q09 ATTCOMP ATSCHL
+	gen slydog1=IC03Q01
+		drop IC03Q01
+		label var slydog1 "ever used computer"
+	gen slydog2=IC04Q01
+		drop IC04Q01
+		label var slydog2 "at home - one player games"
+	gen slydog3=IC05Q01 
+		drop IC05Q01
+		label var slydog3 "internet for school"
+	gen slydog4=IC06Q01
+		drop IC06Q01
+		label var slydog4 "at school - chat"
+	
+save "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/merges/PISA2009.dta", replace
+
+
+
+/************************************************************
+
+							2006			
+							
+*************************************************************/
+
+clear
+use "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/wetransfer-57b6ec/INT STU06.dta", clear
+
+* drop unnecessary countries
+	keep if inlist(CNT, "DNK", "FIN", "GBR", "USA", "DEU", "ISL", "NOR", "SWE")
+	
+	gen country=208 if CNT=="DNK"
+	replace country=246 if CNT=="FIN"
+	replace country=352 if CNT=="ISL"
+	replace country=578 if CNT=="NOR"
+	replace country=752 if CNT=="SWE"
+	replace country=840 if CNT=="USA"
+	replace country=826 if CNT=="GBR"
+	replace country=267 if CNT=="DEU"
+
+	gen year=2006
+
+* rename key variables
+	rename STIDSTD ID
+		gen fish8=ST01Q01 
+		drop ST01Q01 
+	rename fish8 schoolyear
+	rename ST03Q02 birthmonth
+	rename ST03Q03 birthyear
+		gen fish7=ST04Q01 
+		drop ST04Q01 
+	rename fish7 gender
+	rename MISCED mothereduc
+	rename FISCED fathereduc
+	rename HISCED parenteduc
+	rename AGE age
+	rename IMMIG immig
+	rename WEALTH wealth
+	rename ESCS escs
+
+	order CNT country ID age schoolyear birthmonth birthyear gender immig mothereduc fathereduc parenteduc wealth escs year	
+
+* drop unnecessary variables
+	keep CNT country ID age schoolyear birthmonth birthyear gender immig mothereduc fathereduc parenteduc wealth escs year ST14Q01 ST14Q02 ST14Q03 IC01Q01 IC02Q01 IC03Q01 IC03Q02 IC03Q03 IC04Q01 IC04Q02 IC04Q04 IC04Q11
+	gen fish1=IC03Q01
+		drop IC03Q01
+		label var fish1 "use computer at home"
+	gen fish2=IC04Q01
+		drop IC04Q01
+		label var fish2 "browse internet"
+	gen fish3=IC04Q04 
+		drop IC04Q04 
+		label var fish3 "collaborate on internet"
+	gen fish4=IC04Q02 
+		drop IC04Q02
+		label var fish4 "play games"
+	gen fish5=IC02Q01 
+		drop IC02Q01 
+		label var fish5 "how long used computers"
+	gen fish6=IC01Q01 
+		drop IC01Q01 
+		label var fish6 "used computer"
+
+	
+save "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/merges/PISA2006.dta", replace
+
+
+
+/************************************************************
+
+							2003			
+							
+*************************************************************/
+
+clear
+use "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/wetransfer-57b6ec/INT STUI 2003.dta", clear
+
+* drop unnecessary countries
+	keep if inlist(CNT, "DNK", "FIN", "GBR", "USA", "DEU", "ISL", "NOR", "SWE")
+	
+	gen country=208 if CNT=="DNK"
+	replace country=246 if CNT=="FIN"
+	replace country=352 if CNT=="ISL"
+	replace country=578 if CNT=="NOR"
+	replace country=752 if CNT=="SWE"
+	replace country=840 if CNT=="USA"
+	replace country=826 if CNT=="GBR"
+	replace country=267 if CNT=="DEU"
+
+	gen year=2003
+
+* rename key variables
+	rename STIDSTD ID
+		gen test1=ST01Q01
+		drop ST01Q01
+	rename test1 schoolyear
+	rename ST02Q02 birthmonth
+	rename ST02Q03 birthyear
+	rename ST03Q01 gender
+	rename MISCED mothereduc
+	rename FISCED fathereduc
+	rename HISCED parenteduc
+	rename AGE age
+	rename GRADE grade
+	rename IMMIG immig
+	rename TMINS learningtime
+	rename BELONG belong
+	rename ESCS escs
+
+	order CNT country ID age schoolyear birthmonth birthyear gender grade immig mothereduc fathereduc parenteduc learningtime belong escs year	
+
+* drop unnecessary variables
+	keep CNT country ID age schoolyear birthmonth birthyear gender grade immig mothereduc fathereduc parenteduc learningtime belong escs year ST27Q01 ST27Q02 ST27Q03 ST27Q04 ST27Q05 ST27Q06 ST37Q01 ST37Q02 ST37Q03 ST37Q04 ST37Q05 ST37Q06 ST37Q07 ST37Q08 ST37Q09 ST37Q10 IC02Q01 IC03Q01 IC04Q01 IC04Q02 IC04Q03 IC05Q01 IC05Q02 IC05Q12 IC07Q01 IC07Q02 IC07Q03 IC07Q04
+	gen turkey1=IC03Q01
+		drop IC03Q01
+		label var turkey1 "how long using computers"
+	gen turkey2=IC04Q01
+		drop IC04Q01
+		label var turkey2 "use often at home"
+	gen turkey3=IC05Q01 
+		drop IC05Q01
+		label var turkey3 "how often information"
+	gen turkey4=IC07Q01 
+		drop IC07Q01 
+		label var turkey4 "feel important"
+	gen turkey5=IC05Q02 
+		drop IC05Q02 
+		label var turkey5 "how often games"
+	gen turkey6=IC04Q03 
+		drop IC04Q03 
+		label var turkey6 "use often at other places"
+	gen turkey7=IC04Q02 
+		drop IC04Q02 
+		label var turkey7 "use often at school"
+	gen turkey8=IC02Q01 
+		drop IC02Q01 
+		label var turkey8 "used computer"
+	gen turkey9=ST27Q03 
+		drop ST27Q03 
+		label var turkey9 "feel i belong"
+	gen turkey10=ST27Q02 
+		drop ST27Q02 
+		label var turkey10 "make friends"
+	gen turkey11=ST27Q01 
+		drop ST27Q01 
+		label var turkey11 "feel like an outsider"
+	
+save "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/merges/PISA2003.dta", replace
+
+
+
+/************************************************************
+
+							2000			
+							
+*************************************************************/
+
+clear
+use "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/wetransfer-57b6ec/PISA2000a.dta", clear
+
+* drop unnecessary countries
+	rename cnt CNT
+	keep if inlist(CNT, "DNK", "FIN", "GBR", "USA", "DEU", "ISL", "NOR", "SWE")
+	
+	gen country=208 if CNT=="DNK"
+	replace country=246 if CNT=="FIN"
+	replace country=352 if CNT=="ISL"
+	replace country=578 if CNT=="NOR"
+	replace country=752 if CNT=="SWE"
+	replace country=840 if CNT=="USA"
+	replace country=826 if CNT=="GBR"
+	replace country=267 if CNT=="DEU"
+
+	gen year=2000
+	
+* rename key variables
+	rename STIDSTD ID
+	rename ST02Q01 schoolyear
+	rename ST01Q02 birthmonth
+	rename ST01Q03 birthyear
+		gen test1=ST03Q01
+		drop ST03Q01
+	rename test1 gender
+	rename misced mothereduc
+	rename fisced fathereduc
+	rename age agem
+		gen age=agem/12 if agem<900
+	rename belong belong
+	rename insmot motivation
+	rename wealth wealth
+
+	order CNT country ID age schoolyear birthmonth birthyear gender mothereduc fathereduc belong motivation wealth year	
+	
+* drop unecessary variables
+	keep CNT country ID age schoolyear birthmonth birthyear gender mothereduc fathereduc belong motivation wealth year ST22Q01 ST22Q02 ST22Q04 ST26Q12 ST26Q13 ST26Q14 ST26Q15 ST31Q01 ST31Q02 ST31Q03 ST31Q04 ST31Q05 ST31Q06 ST31Q07 ST31Q08 ST21Q04 ST34Q01 ST39Q02 ST39Q04 IT01Q01 IT01Q02 IT01Q03 IT01Q04 IT02Q01 IT04Q01 IT04Q02 IT04Q03 IT04Q04 IT05Q01 IT05Q02 IT05Q03 IT05Q04 IT06Q01 IT06Q05 IT07Q01 IT08Q01 IT09Q01 IT10Q01 joyread comab comuse comatt
+	
+save "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/merges/PISA2000.dta", replace
+	
+	
+
+/************************************************************
+
+				APPEND AND CLEAN VARIABLES		
+							
+*************************************************************/
+
+clear
+set more off
+use "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/merges/PISA2015.dta"
+
+append using "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/merges/PISA2012.dta", force
+append using "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/merges/PISA2009.dta", force
+append using "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/merges/PISA2006.dta", force
+append using "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/merges/PISA2003.dta", force
+append using "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/merges/PISA2000.dta", force
+
+* drop unnecessary
+drop country CNTRYID birthmonth birthyear ID childeduc learningtime
+
+* replace with missing
+replace age=. if age>90
+replace schoolyear=. if schoolyear>20
+replace gender=. if gender>2
+replace immig=. if immig>3
+replace immigyear=. if immigyear>90
+replace mothereduc=. if mothereduc>=7
+replace fathereduc=. if fathereduc>=7
+replace parenteduc=. if parenteduc>=7
+replace belong=. if belong>90
+replace motivation=. if motivation>90
+replace emosup=. if emosup>90
+replace wealth=. if wealth>89
+replace escs=. if escs>89
+
+* replace how many
+	rename ST012Q06NA howmanycomp
+		replace howmanycomp=ST27Q03 if ST27Q03!=.
+		replace howmanycomp=ST21Q03 if ST21Q03!=.
+		replace howmanycomp=ST14Q03 if ST14Q03!=.
+		drop ST27Q03 ST21Q03 ST14Q03
+	rename ST012Q05NA howmanysmart
+	rename ST012Q07NA howmanytab
+	rename ST27Q01 howmanycell
+		replace howmanycell=ST21Q01 if ST21Q01!=.
+		replace howmanycell=ST14Q01 if ST14Q01!=.
+		drop ST21Q01 ST14Q01
+	rename ST27Q02 howmanytv
+		replace howmanytv=ST21Q02 if ST21Q02!=.
+		replace howmanytv=ST14Q02 if ST14Q02!=.
+		replace howmanytv=ST012Q01TA if ST012Q01TA!=.
+		drop ST21Q02 ST14Q02 ST012Q01TA
+
+* replace feel
+	rename ST034Q01TA feeloutsider
+		replace feeloutsider=ST87Q01 if ST87Q01!=.
+			gen test=ST31Q01
+			replace ST31Q01=1 if test==4
+			replace ST31Q01=2 if test==3
+			replace ST31Q01=3 if test==2
+			replace ST31Q01=4 if test==1
+		replace feeloutsider=ST31Q01 if ST31Q01!=. 
+		replace feeloutsider=turkey11 if turkey11!=.
+		drop ST87Q01 ST31Q01 test turkey11
+	rename ST034Q04TA feelawkward
+		replace feelawkward=ST87Q04 if ST87Q04!=.
+		replace feelawkward=ST27Q04 if ST27Q04!=. 
+			gen test=ST31Q04
+			replace ST31Q04=1 if test==4
+			replace ST31Q04=2 if test==3
+			replace ST31Q04=3 if test==2
+			replace ST31Q04=4 if test==1
+		replace feelawkward=ST31Q04 if ST31Q04!=. 
+		drop ST87Q04 ST27Q04 ST31Q04 test
+	rename ST034Q06TA feellonely
+		replace feellonely=ST87Q06 if ST87Q06!=.
+		replace feellonely=ST27Q06 if ST27Q06!=. 
+			gen test=ST31Q06
+			replace ST31Q06=1 if test==4
+			replace ST31Q06=2 if test==3
+			replace ST31Q06=3 if test==2
+			replace ST31Q06=4 if test==1
+		replace feellonely=ST31Q06 if ST31Q06!=. 
+		drop ST87Q06 ST27Q06 ST31Q06 test
+	rename ST034Q03TA feelbelong
+		replace feelbelong=ST87Q03 if ST87Q03!=.
+			gen test=ST31Q03
+			replace ST31Q03=1 if test==4
+			replace ST31Q03=2 if test==3
+			replace ST31Q03=3 if test==2
+			replace ST31Q03=4 if test==1
+		replace feelbelong=ST31Q03 if ST31Q03!=. 
+		replace feelbelong=turkey9 if turkey9!=.
+		drop ST87Q03 ST31Q03 test turkey9
+	rename IC013Q12NA badinternet
+
+* replace social
+	rename ST034Q02TA socialmakefriends 
+		replace socialmakefriends=ST87Q02 if ST87Q02!=.
+			gen test=ST31Q02
+			replace ST31Q02=1 if test==4
+			replace ST31Q02=2 if test==3
+			replace ST31Q02=3 if test==2
+			replace ST31Q02=4 if test==1
+		replace socialmakefriends=ST31Q02 if ST31Q02!=.
+		replace socialmakefriends=turkey10 if turkey10!=.
+		drop ST31Q02 ST87Q02 test turkey10 
+	rename ST034Q05TA socialliked 
+		replace socialliked=ST27Q05 if ST27Q05!=.
+		replace socialliked=ST87Q05 if ST87Q05!=.
+			gen test=ST31Q05
+			replace ST31Q05=1 if test==4
+			replace ST31Q05=2 if test==3
+			replace ST31Q05=3 if test==2
+			replace ST31Q05=4 if test==1
+		replace socialliked=ST31Q05 if ST31Q05!=.
+		drop ST27Q05 ST31Q05 ST87Q05 test
+			
+* replace tech at home
+	rename IC01Q01 homecomputer
+		replace homecomputer=IC001Q01TA if IC001Q01TA!=.
+		replace homecomputer=merge10 if merge10!=.
+		drop IC001Q01TA merge10 
+		drop IC02Q01
+	rename IC01Q02 homelaptop
+		replace homelaptop=IC001Q02TA if IC001Q02TA!=.
+		replace homecomputer=merge9 if merge9!=.
+		drop IC001Q02TA merge9
+		drop IC02Q02
+	rename IC001Q03TA hometablet
+		replace hometablet=merge8 if merge8!=.
+		drop merge8
+		label var hometablet "At home - Tablet"
+	rename IC01Q03 homeinternet
+		replace homeinternet=IC001Q04TA if IC001Q04TA!=.
+		replace homeinternet=merge7 if merge7!=.
+		drop IC001Q04TA merge7
+	rename IC01Q04 homevideogames
+		replace homevideogames=IC001Q05TA if IC001Q05TA!=.
+		replace homevideogames=merge6 if merge6!=.
+		drop IC001Q05TA merge6
+	rename IC01Q07 homesmartphone
+		replace homesmartphone=IC001Q07TA if IC001Q07TA!=.
+		drop IC001Q07TA
+	rename IC01Q05 homecellphone
+	drop IC04Q02 IC04Q03 IC04Q04 IC04Q05 IC04Q06 IC04Q07 IC04Q08 IC04Q09 IC05Q02 IC05Q03 IC05Q04 IC05Q05 IC06Q08
+	
+* replace first
+	rename IC002Q01NA firstdevice
+	rename IC003Q01TA firstcomputer
+		replace firstcomputer=merge2 if merge2!=.
+		drop merge2
+		replace firstcomputer=. if firstcomputer>=7
+	rename IC004Q01TA firstinternet
+		replace firstinternet=merge1 if merge1!=.
+		drop merge1
+		replace firstinternet=. if firstinternet>=7
+		
+* replace forget
+	rename IC013Q01NA forgetdigital
+	gen forgetcomp=1 if (IC07Q04==1 | IC07Q04==2)
+		replace forgetcomp=1 if IT10Q01==1
+		replace forgetcomp=0 if (IC07Q04==3 | IC07Q04==4)
+		replace forgetcomp=0 if IT10Q01==2
+		label var forgetcomp "forget time when using the computer, =1 for yes"
+
+* internet weekend / weekday
+	rename IC007Q01TA internetweekend
+		destring IC07Q01, gen(test2)
+		replace internetweekend=test2 if test2!=.
+		drop test2 IC07Q01
+		replace internetweekend=. if internetweekend>10
+	rename IC006Q01TA internetweekday
+		destring IC06Q01, gen(test2)
+		replace internetweekday=test2 if test2!=.
+		drop test2 IC06Q01
+		replace internetweekday=. if internetweekday>10
+
+* chatonline
+	rename ST26Q02 chat2009
+		replace chat2009=. if chat2009>=7
+	rename IC04Q11 chat2006
+		replace chat2006=. if chat2006>=7
+	rename IC05Q12 chat2003
+		replace chat2003=. if chat2003>=7
+	rename IT05Q02 chat2000
+		replace chat2000=. if chat2000>=7
+		label var chat2000 "how often do you use a computer for electronic communication"
+	
+* before and after
+	rename ST076Q03NA beforetv
+	rename ST076Q04NA beforebook
+	rename ST076Q05NA beforeinternet
+	rename ST076Q06NA beforegames
+	rename ST076Q07NA beforesocial
+	rename ST076Q08NA beforeparents
+	
+	rename ST078Q03NA aftertv
+	rename ST078Q04NA afterbook
+	rename ST078Q05NA afterinternet
+	rename ST078Q06NA aftergames
+	rename ST078Q07NA aftersocial
+	rename ST078Q08NA afterparents
+
+* team
+	rename ST082Q01NA team1
+	rename ST082Q02NA team2
+	rename ST082Q03NA team3
+	rename ST082Q08NA team4
+	rename ST082Q09NA team5
+	rename ST082Q12NA team6
+	rename ST082Q13NA team7
+	rename ST082Q14NA team8
+
+* exercise 
+	rename ST032Q01NA exercisemod
+	rename ST032Q02NA exercisevig
+	
+* how long
+	rename fish5 howlongcomp
+		replace howlongcomp=turkey1 if turkey1!=.
+		drop turkey1
+		replace howlongcomp=. if howlongcomp>4
+		label var howlongcomp "how long used computers: <1 year | 1-3yrs | 3-5yrs | 5+"
+		
+* devices
+	rename IC008Q04TA devicechat  
+	rename IC008Q01TA devicegame1
+	rename IC008Q02TA devicegame2
+	rename IC008Q05TA devicesocialmedia
+	rename IC008Q07NA devicegame3
+	rename IC008Q08TA devicevideos
+	rename IC008Q12TA deviceupload
+		
+* internet for school
+	rename IC010Q01TA intbrowselessons
+	rename IC010Q02NA intbrowseschoolwork
+	rename IC010Q05NA intsocialstudents
+	rename IC010Q06NA intsocialteachers
+
+* how often use computer at home
+	gen howoftencomp=0 if (fish1==5 | turkey2==5 | IT04Q01==5)
+		replace howoftencomp=1 if (fish1==3 | fish1==4 | turkey2==3 | turkey2==4 | IT04Q01==4 | IT04Q01==3)
+		replace howoftencomp=2 if (fish1==2 | turkey2==2 | IT04Q01==2)
+		replace howoftencomp=3 if (fish1==1 | turkey2==1 | IT04Q01==1)
+		label var howoftencomp "how often do you use a computer? 0=never, 1=rarely, 2=weekly, 3=daily"
+
+* how often use internet
+	gen howoftenint=0 if (fish2==5 | IT05Q01==5)
+		replace howoftenint=1 if (fish2==3 | fish2==4 | IT05Q01==3 | IT05Q01==4)
+		replace howoftenint=2 if (fish2==2 | IT05Q01==2)
+		replace howoftenint=3 if (fish2==1 | IT05Q01==1)
+		label var howoftenint "how often do you use the internet? 0=never, 1=rarely, 2=weekly, 3=daily"
+
+* how often play computer games
+	gen howoftengames=0 if (fish4==5 | IT06Q01==5)
+		replace howoftengames=1 if (fish4==3 | fish4==4 | IT06Q01==3 | IT06Q01==4)
+		replace howoftengames=2 if (fish4==2 | IT06Q01==2)
+		replace howoftengames=3 if (fish4==1 | IT06Q01==1)
+		label var howoftengames "how often do you play computer games? 0=never, 1=rarely, 2=weekly, 3=daily"
+		
+* used computer before
+	replace fish6=. if fish6>3
+	replace turkey8=. if turkey8>3
+	rename fish6 usedcomputer
+		replace usedcomputer=turkey8 if turkey8!=.
+		replace usedcomputer=0 if usedcomputer==2
+		label var usedcomputer "have you used a computer? =1 for yes"
+
+* how often educational software
+	rename IT06Q05 howofteneduc
+		label var howofteneduc "how often do you use a computer for education purposes"
+
+* life satisfaction
+	rename ST016Q01NA lifesatisfaction
+		replace lifesatisfaction=. if lifesatisfaction>10
+
+* bullying
+	rename ST038Q01NA bully1
+	rename ST038Q02NA bully2
+	rename ST038Q03NA bully3
+	rename ST038Q04NA bully4
+	rename ST038Q05NA bully5
+	rename ST038Q06NA bully6
+	rename ST038Q07NA bully7
+	rename ST038Q08NA bully8
+
+* parental support
+	rename ST123Q01NA psup1 
+	rename ST123Q02NA psup2
+	rename ST123Q03NA psup3
+	rename ST123Q04NA psup4
+		
+* final renames
+	rename IT07Q01 compimportant
+		label var compimportant "It is very important to me to work with a computer."
+	rename IT08Q01 compfun
+		label var compfun "To play or work with a computer is really fun."
+	rename IT09Q01 compinterest
+		label var compinterest "I use a computer because I am very interested in this."
+	rename IC013Q13NA ddlike
+	rename IC015Q05NA dduse
+	
+keep psup1 psup2 psup3 psup4 CNT age schoolyear gender grade lifesatisfaction bully* immig immigyear mothereduc fathereduc parenteduc belong motivation emosup wealth escs year howmanysmart howmanycomp howmanytab hometablet howmanycell howmanytv homesmartphone homecomputer homelaptop homeinternet homevideogames homecellphone howlongcomp howoftencomp feeloutsider feelbelong feelawkward feellonely badinternet socialmakefriends socialliked firstdevice firstcomputer firstinternet forgetdigital forgetcomp internetweekday internetweekend beforetv beforebook beforeinternet beforegames beforesocial beforeparents aftertv afterbook afterinternet aftergames aftersocial afterparents team1 team2 team3 team4 team5 team6 team7 team8 exercisemod exercisevig chat2009 chat2006 chat2003 devicegame1 devicegame2 devicechat devicesocialmedia devicegame3 devicevideos deviceupload intbrowselessons intbrowseschoolwork intsocialstudents intsocialteachers usedcomputer ddlike dduse chat2000 howofteneduc compimportant compfun compinterest howoftenint howoftengames
+order CNT age schoolyear gender grade immig immigyear mothereduc fathereduc parenteduc belong motivation emosup wealth escs year how* home* feel* badinternet socialmakefriends socialliked lifesatisfaction bully* firstdevice firstcomputer firstinternet forgetdigital forgetcomp internetweekday internetweekend beforetv beforebook beforeinternet beforegames beforesocial beforeparents aftertv afterbook afterinternet aftergames aftersocial afterparents team1 team2 team3 team4 team5 team6 team7 team8 exercisemod exercisevig chat* devicegame1 devicegame2 devicechat devicesocialmedia devicegame3 devicevideos deviceupload intbrowselessons intbrowseschoolwork intsocialstudents intsocialteachers usedcomputer ddlike dduse howofteneduc compimportant compfun compinterest howoftenint howoftengames
+
+
+/************************************************************
+					
+					Clean variables
+					
+*************************************************************/
+
+replace grade=. if grade>3
+
+replace howmanysmart=. if howmanysmart>4
+replace howmanycomp=. if howmanycomp>4
+replace howmanytab=. if howmanytab>4
+replace howmanycell=. if howmanycell>4
+replace howmanytv=. if howmanytv>4
+
+replace howofteneduc=. if howofteneduc>5
+
+replace hometablet=. if hometablet>4
+replace homesmartphone=. if homesmartphone>4
+replace homecomputer=. if homecomputer>4
+replace homelaptop=. if homelaptop>4
+replace homeinternet=. if homeinternet>4
+replace homevideogames=. if homevideogames>4
+replace homecellphone=. if homecellphone>4
+
+replace feeloutsider=. if feeloutsider>4
+replace feelbelong=. if feelbelong>4
+replace feelawkward=. if feelawkward>4
+replace feellonely=. if feellonely>4
+
+replace badinternet=. if badinternet>4
+
+replace socialmakefriends=. if socialmakefriends>4
+replace socialliked=. if socialliked>4
+
+replace firstdevice=. if firstdevice>5
+
+replace forgetdigital=. if forgetdigital>4
+
+replace beforetv=. if beforetv>2
+	replace beforetv=0 if beforetv==2
+replace beforebook=. if beforebook>2
+	replace beforebook=0 if beforebook==2
+replace beforeinternet=. if beforeinternet>2
+	replace beforeinternet=0 if beforeinternet==2
+replace beforegames=. if beforegames>2
+	replace beforegames=0 if beforegames==2
+replace beforesocial=. if beforesocial>2
+	replace beforesocial=0 if beforesocial==2
+replace beforeparents=. if beforeparents>2
+	replace beforeparents=0 if beforeparents==2
+
+replace aftertv=. if aftertv>2
+	replace aftertv=0 if aftertv==2
+replace afterbook=. if afterbook>2
+	replace afterbook=0 if afterbook==2
+replace afterinternet=. if afterinternet>2
+	replace afterinternet=0 if afterinternet==2
+replace aftergames=. if aftergames>2
+	replace aftergames=0 if aftergames==2
+replace aftersocial=. if aftersocial>2
+	replace aftersocial=0 if aftersocial==2
+replace afterparents=. if afterparents>2
+	replace afterparents=0 if afterparents==2
+
+replace team1=. if team1>4
+replace team2=. if team2>4
+replace team3=. if team3>4
+replace team4=. if team4>4
+replace team5=. if team5>4
+replace team6=. if team6>4
+replace team7=. if team7>4
+replace team8=. if team8>4
+
+replace exercisemod=. if exercisemod>8
+replace exercisevig=. if exercisevig>8
+
+replace chat2009=. if chat2009==1
+
+replace devicegame1=. if devicegame1>5
+replace devicegame2=. if devicegame2>5
+replace devicechat=. if devicechat>5
+replace devicesocialmedia=. if devicesocialmedia>5
+replace devicegame3=. if devicegame3>5
+replace devicevideos=. if devicevideos>5
+replace deviceupload=. if deviceupload>5
+
+replace intbrowselessons=. if intbrowselessons>5
+replace intbrowseschoolwork=. if intbrowseschoolwork>5
+replace intsocialstudents=. if intsocialstudents>5
+replace intsocialteachers=. if intsocialteachers>5
+
+replace ddlike=. if ddlike>4
+replace dduse=. if dduse>4
+
+replace compimportant=. if compimportant>2
+replace compfun=. if compfun>2
+replace compinterest=. if compinterest>2
+
+drop bully1 bully2
+rename bully7 bully1
+rename bully8 bully2
+replace bully1=. if bully1>4
+replace bully2=. if bully2>4
+replace bully3=. if bully3>4
+replace bully4=. if bully4>4
+replace bully5=. if bully5>4
+replace bully6=. if bully6>4
+gen bully=bully1+bully2+bully3+bully4+bully5+bully6 if (bully1!=. & bully2!=. & bully3!=. & bully4!=. & bully5!=. & bully6!=.)
+	label var bully "bully1+bully2+bully3+bully4+bully5+bully6"
+gen bullied=0 if bully==6
+	replace bullied=1 if (bully>=7 & bully<=12)
+	replace bullied=2 if (bully>=13 & bully<=18)
+	replace bullied=3 if (bully>=19 & bully<=24)
+	label var bullied "=0 if never, =1 if rarely, =2 if often, =3 if regularly"
+
+gen nordic=1 if inlist(CNT, "DNK", "FIN", "ISL", "NOR", "SWE")
+	replace nordic=0 if inlist(CNT, "USA", "DEU", "GBR")
+	label var nordic "=1 if nordic country"
+
+replace psup1=. if psup1>4
+replace psup2=. if psup2>4
+replace psup3=. if psup3>4
+replace psup4=. if psup4>4
+
+rename CNT country	
+	
+tab (country), gen (country)
+
+
+order country nordic age schoolyear gender grade immig immigyear mothereduc fathereduc parenteduc belong motivation emosup wealth escs year feeloutsider feelbelong feelawkward feellonely socialmakefriends socialliked lifesatisfaction badinternet howmanysmart howmanycomp howmanytab howmanycell howmanytv howlongcomp howoftencomp howofteneduc howoftenint howoftengames hometablet homesmartphone homecomputer homelaptop homeinternet homevideogames homecellphone firstdevice firstcomputer firstinternet forgetdigital forgetcomp internetweekday internetweekend beforetv beforebook beforeinternet beforegames beforesocial beforeparents aftertv afterbook afterinternet aftergames aftersocial afterparents team1 team2 team3 team4 team5 team6 team7 team8 exercisemod exercisevig chat2000 chat2003 chat2006 chat2009 devicegame1 devicegame2 devicegame3 devicechat devicesocialmedia devicevideos deviceupload intbrowselessons intbrowseschoolwork intsocialstudents intsocialteachers usedcomputer ddlike dduse compimportant compfun compinterest bullied bully bully1 bully2 bully3 bully4 bully5 bully6
+save "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/merges/PISA2000-2015.dta", replace
+
+
+
+/*************************************************************
+					
+							ANALYSIS
+					
+*************************************************************/
+
+clear
+use "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/merges/PISA2000-2015.dta"
+
+drop if nordic==0 
+
+* PARENTAL SUPPORT QUARTILES
+	
+	xtile emosuptile=emosup,n(5)
+	tab (emosuptile), gen (emosuptile)
+
+
+	* LIFE SATISFACTION PERCENTAGE 
+	
+		foreach v of var lifesatisfaction  { 
+			su `v', meanonly 
+			gen s`v' = (`v' - r(min))/(r(max) - r(min)) 
+			}	
+		label var slifesatisfaction "0-1 scaled lifesatisfaction"
+
+	* GENDER DUMMY VARIABLES 
+	
+		tab (gender), gen (gender)
+		
+	* SOCIAL MEDIA DUMMY VARIABLE
+	
+		gen somedummy=1 if devicesocialmedia==5
+		replace somedummy=0 if devicesocialmedia<5 & devicesocialmedia!=.
+		
+order lifesatisfaction devicesocialmedia belong wealth emosup emosuptile1 emosuptile2 emosuptile3 emosuptile4 beforesocial aftersocial badinternet forgetdigital dduse year gender age country2 country3 country5 country6 country7 
+	outreg2 using "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/Table1.doc", replace sum(sample) keep (lifesatisfaction devicesocialmedia belong wealth emosup emosuptile1 emosuptile2 emosuptile3 emosuptile4 beforesocial aftersocial badinternet forgetdigital dduse year gender age country2 country3 country5 country6 country7 )
+
+/*************************************************************
+						TIME TRENDS
+*************************************************************/
+ 
+ 
+	* LONELINESS TIME TREND 
+	
+		sort year country feellonely
+		by year country: egen averagelonely=mean(feellonely) 
+		twoway (line averagelonely year, sort), by(country)
+
+	* MAKING FRIENDS TIME TREND
+	
+		by year country: egen averagemakefriends=mean(socialmakefriends) 
+		twoway (line averagemakefriends year, sort), by(country)
+
+
+/*************************************************************
+			     FEELING BAD WITHOUT INTERNET
+*************************************************************/	
+
+	reg badinternet gender1 country3 country5 country7 wealth if nordic==1
+		outreg2 using "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/Table2.doc", replace ctitle(all) title(bad internet) dec(3)	
+	reg badinternet gender1 country3 country5 country7 wealth devicesocialmedia if nordic==1
+		outreg2 using "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/Table2.doc", append ctitle(social media) title(bad internet) dec(3)	
+	reg badinternet gender1 country3 country5 country7 wealth belong if nordic==1
+		outreg2 using "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/Table2.doc", append ctitle(belong) title(bad internet) dec(3)	
+	reg badinternet gender1 country3 country5 country7 wealth emosup if nordic==1
+		outreg2 using "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/Table2.doc", append ctitle(emosup) title(bad internet) dec(3)		
+	
+
+/*************************************************************
+					  PARENTAL SUPPORT
+*************************************************************/
+
+	reg slifesatisfaction somedummy country3 belong wealth emosup gender1
+	reg slifesatisfaction somedummy country3 belong wealth emosup if gender1==1
+
+	
+	* SOCIAL MEDIA AND LIFE SATISFACTION 
+	
+		reg slifesatisfaction devicesocialmedia country3 belong wealth emosup if nordic==1 & gender1==0
+			outreg2 using "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/Table3.doc", replace ctitle(boys) title(social media and ls) dec(3)	
+		reg slifesatisfaction devicesocialmedia country3 belong wealth emosup if nordic==1 & gender1==1
+			outreg2 using "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/Table3.doc", append ctitle(girls) title(social media and ls) dec(3)	
+
+	* LIFE SATISFACTION BY PARENTAL SUPPORT
+	
+		* all genders
+		reg slifesatisfaction somedummy country3 gender1  wealth emosup if nordic==1 & emosuptile==1
+		reg slifesatisfaction somedummy country3 gender1  wealth emosup if nordic==1 & emosuptile==4
+		
+		* boys
+		reg slifesatisfaction somedummy country3 belong wealth emosup if nordic==1 & emosuptile==1 & gender1==0
+		reg slifesatisfaction somedummy country3 belong wealth emosup if nordic==1 & emosuptile==4 & gender1==0
+		
+		* girls
+		reg slifesatisfaction somedummy country3 wealth belong if nordic==1 & emosuptile==1 & gender1==1
+			outreg2 using "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/Table4.doc", replace ctitle(girls low ps) title(social media and ls) dec(3)	
+		reg slifesatisfaction somedummy country3 wealth if nordic==1 & emosuptile==4 & gender1==1
+			outreg2 using "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/Table4.doc", append ctitle(girls high ps) title(social media and ls) dec(3)	
+	
+
+/*************************************************************
+					SOCIALIZING OFFLINE
+*************************************************************/
+
+	
+	* SOCIALIZING OFFLINE
+	
+		reg beforesocial devicesocialmedia belong emosup gender1 wealth country3 country5 country7 if nordic==1 
+			outreg2 using "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/Table5.doc", replace ctitle(before school) title(social media and activity) dec(3)	
+		reg aftersocial devicesocialmedia belong emosup gender1 wealth country3 country5 country7 if nordic==1 
+			outreg2 using "/Users/micahkaats/Desktop/Happiness Research Institute/Digital Wellbeing/Data/PISA/Table5.doc", append ctitle(after school) title(social media and activity) dec(3)	
+
+	
+/*************************************************************
+				  	  SOCIAL STATUS
+*************************************************************/
+
+	
+	* SOCIALIZING OFFLINE
+		
+		gen belongdum=1 if belong>0 & belong!=.
+		replace belongdum=0 if belong<0 & belong!=.
+		
+		reg slifesatisfaction somedummy country3 wealth emosup if belongdum==0 & gender==1
+		reg slifesatisfaction somedummy country3 wealth emosup if belongdum==1 & gender==1
+		
+		xtile belongtile=belong, n(4)
+		
+		reg slifesatisfaction somedummy country3 wealth emosup if belongtile==1 & gender==1
+		reg slifesatisfaction somedummy country3 wealth emosup if belongtile==2 & gender==1
+		reg slifesatisfaction somedummy country3 wealth emosup if belongtile==3 & gender==1
+		reg slifesatisfaction somedummy country3 wealth emosup if belongtile==4 & gender==1
+		
+				
+		
+	
+	
+/* SCRAP
+	
+		* life satisfaction
+		
+			reg lifesatisfaction beforetv country1 country2 country3 country4 country5 country6 country7 country8 emosup gender1 belong wealth 
+			reg lifesatisfaction aftertv country1 country2 country3 country4 country5 country6 country7 country8 emosup gender1 belong wealth 
+
+			reg lifesatisfaction beforeinternet country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+			reg lifesatisfaction afterinternet country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+
+			reg lifesatisfaction beforesocial country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+			reg lifesatisfaction aftersocial country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+
+			reg lifesatisfaction beforeparents country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+			reg lifesatisfaction afterparents country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+
+			reg lifesatisfaction beforebook country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+			reg lifesatisfaction afterbook country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+
+			* IMPORTANT
+			reg feellonely devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth belong  
+			reg beforesocial devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth  if nordic==1		
+			reg aftersocial devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth  if nordic==1
+			reg bully devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth   if nordic==1
+			
+			reg lifesatisfaction devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth belong exercisemod exercisevig 
+			reg feellonely devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if emosuptile==1
+			reg feellonely devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if emosuptile==2
+			reg feellonely devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if emosuptile==3
+			reg feellonely devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if emosuptile==4
+			
+			reg feellonely devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig 
+			reg feellonely devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==1
+			reg feellonely devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==2
+			reg feellonely devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==3
+			reg feellonely devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==4
+			
+			reg feelbelong devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig 
+			reg feelbelong devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==1
+			reg feelbelong devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==2
+			reg feelbelong devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==3
+			reg feelbelong devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==4
+		
+			reg feelbelong devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig 
+			reg feelbelong devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==1
+			reg feelbelong devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==2
+			reg feelbelong devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==3
+			reg feelbelong devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==4
+		
+			reg socialmakefriends devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender exercisemod exercisevig 
+			reg socialmakefriends devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==1
+			reg socialmakefriends devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==2
+			reg socialmakefriends devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==3
+			reg socialmakefriends devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==4
+	
+			reg socialliked devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth  exercisemod exercisevig
+			reg socialliked devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==1
+			reg socialliked devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==2
+			reg socialliked devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==3
+			reg socialliked devicesocialmedia country1 country2 country3 country4 country5 country6 country7 country8 emosup gender wealth exercisemod exercisevig if quantbelong==4
+	
+
+			* IMPORTANT
+
+			
+			reg badinternet devicesocialmedia gender country1 country2 country3 country4 country5 country6 country7 country8 belong wealth exercisemod exercisevig if nordic==1
+
+			reg feellonely howoftenint gender country1 country2 country3 country4 country5 country6 country7 country8 if nordic==1
+			reg feellonely internetweekend gender country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig if nordic==1
+	
+	* internet
+		
+		reg howmanysmart badinternet country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg howmanytab badinternet country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg howmanycomp badinternet country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg howmanytv badinternet country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+	
+		reg lifesatisfaction badinternet country1 country2 country3 country4 country5 country6 country7 country8 emosup belong wealth exercisemod exercisevig if (gender==1 & nordic==1)
+		reg lifesatisfaction badinternet country1 country2 country3 country4 country5 country6 country7 country8 emosup belong wealth exercisemod exercisevig if (gender==2 & nordic==1)
+
+		
+		reg feeloutsider badinternet country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg feelbelong badinternet country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg feelawkward badinternet country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg feellonely badinternet country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg socialmakefriends badinternet country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg socialliked badinternet country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+
+		reg lifesatisfaction internetweekday country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg feeloutsider internetweekday country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg feelbelong internetweekday country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg feelawkward internetweekday country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg feellonely internetweekday country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg socialmakefriends internetweekday country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg socialliked internetweekday country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		
+		reg lifesatisfaction internetweekend country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg feeloutsider internetweekend country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg feelbelong internetweekend country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg feelawkward internetweekend country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg feellonely internetweekend country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg socialmakefriends internetweekend country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		reg socialliked internetweekend country1 country2 country3 country4 country5 country6 country7 country8 emosup gender belong wealth exercisemod exercisevig
+		
+		
+	* how many devices at home
+	
+		reg lifesatisfaction howmanysmart howmanytab howmanycomp howmanytv country1 country2 country3 country4 country5 country6 country7 country8 escs gender belong year
+		reg feeloutsider howmanysmart howmanytab howmanycomp howmanytv country1 country2 country3 country4 country5 country6 country7 country8 escs gender belong year
+		reg feelbelong howmanysmart howmanytab howmanycomp howmanytv country1 country2 country3 country4 country5 country6 country7 country8 escs gender belong year
+		reg feelawkward howmanysmart howmanytab howmanycomp howmanytv country1 country2 country3 country4 country5 country6 country7 country8 escs gender belong year
+		reg feellonely howmanysmart howmanytab howmanycomp howmanytv country1 country2 country3 country4 country5 country6 country7 country8 escs gender belong year
+		reg socialmakefriends howmanysmart howmanytab howmanycomp howmanytv country1 country2 country3 country4 country5 country6 country7 country8 escs gender belong year
+		reg socialliked howmanysmart howmanytab howmanycomp howmanytv country1 country2 country3 country4 country5 country6 country7 country8 escs gender belong year
+	
+
+	* chat
+	
+		reg feellonely chat2000 country1 country2 country3 country4 country5 country6 country7 country8 gender belong wealth
+		reg feeloutsider chat2000 country1 country2 country3 country4 country5 country6 country7 country8 gender belong wealth
+		reg feelawkward chat2000 country1 country2 country3 country4 country5 country6 country7 country8 gender belong wealth
+		reg feelbelong chat2000 country1 country2 country3 country4 country5 country6 country7 country8 gender belong wealth
+
+		reg feellonely chat2003 country1 country2 country3 country4 country5 country6 country7 country8 gender belong parenteduc
+		reg feeloutsider chat2003 country1 country2 country3 country4 country5 country6 country7 country8 gender belong parenteduc
+		reg feelawkward chat2003 country1 country2 country3 country4 country5 country6 country7 country8 gender belong parenteduc
+		reg feelbelong chat2003 country1 country2 country3 country4 country5 country6 country7 country8 gender belong parenteduc
+			
+		reg feellonely chat2006 country1 country2 country3 country4 country5 country6 country7 country8 gender mothereduc fathereduc
+		reg feeloutsider chat2006 country1 country2 country3 country4 country5 country6 country7 country8 gender belong parenteduc
+		reg feelawkward chat2006 country1 country2 country3 country4 country5 country6 country7 country8 gender belong parenteduc
+		reg feelbelong chat2006 country1 country2 country3 country4 country5 country6 country7 country8 gender belong parenteduc
+			
+		
+* boys and girls on social media
+tab weekdaydum if nordic==1 & gender==1 & year==2015
+tab weekdaydum if nordic==1 & gender==2 & year==2015
+
+tab weekenddum if nordic==1 & gender==1 & year==2015
+tab weekenddum if nordic==1 & gender==2 & year==2015
+
+tab totaldum if nordic==1 & gender==1 & year==2015
+tab totaldum if nordic==1 & gender==2 & year==2015
+
+sum internetweekday if nordic==1 & gender==1 & year==2015
+sum internetweekday if nordic==1 & gender==2 & year==2015
+tab internetweekday if nordic==1 & gender==1 & year==2015
+tab internetweekday if nordic==1 & gender==2 & year==2015
+
+sum internetweekend if nordic==1 & gender==1 & year==2015
+sum internetweekend if nordic==1 & gender==2 & year==2015
+tab internetweekend if nordic==1 & gender==1 & year==2015
+tab internetweekend if nordic==1 & gender==2 & year==2015
+
+* On weekdays, 70% of Nordic 15 to 16-year-old boys use the internet for at least two hours per day, compared with 66% of girls. On weekends, 55% of boys use the internet for at least four hours per day, compared with 49% of girls. 
+
+
+
+tab internetweekday, nolabel
+
+replace weekdaydum=1 if internetweekday>=6 & internetweekday!=.
+	replace weekdaydum=0 if internetweekday<6 & internetweekday!=.
+
+replace weekenddum=1 if internetweekend>=6 & internetweekend!=.
+	replace weekenddum=0 if internetweekend<6 & internetweekend!=.
+
+gen totaldum=1 if internetweekday>=5 & internetweekday!=. & internetweekend>=5 & internetweekend!=.
+	replace totaldum=0 if internetweekday<5 & internetweekday!=.
+	replace totaldum=0 if internetweekend<5 & internetweekend!=.
+
+	* activities before and after school
+	xtile belongtile=belong,n(4)
+	tab (belongtile), gen (belongtile)
+	
+
+	* individual parental support questions
+	gen psum=psup1+psup2+psup3+psup4
+	xtile psumtile=psum,n(10)
+	tab (psumtile), gen (psumtile)
+
+	* device social media
+	tab (devicesocialmedia), gen (devicesocialmedia)
+	
+	* social media use variable
+	gen somedum=1 if devicesocialmedia==4
+	replace somedum=0 if devicesocialmedia<4
+	
+
+	
+	* lonely dummy variable
+	gen lonelydum=1 if (feellonely==1 | feellonely==2)
+	replace lonelydum=0 if (feellonely==3 | feellonely==4)
+	
+
+	* bad internet dummy
+	gen badinternetdum=1 if badinternet>2 & badinternet!=.
+		replace badinternetdum=0 if badinternet<=2 & badinternet!=.
+		
+	tab badinternetdum if gender1==0 & nordic==1
+	tab badinternetdum if gender1==1 & nordic==1
+	
+	* as i want to use them dummy
+	gen ddusedum=1 if dduse>2 & dduse!=.
+		replace ddusedum=0 if dduse<=2 & dduse!=.
+		
+	tab ddusedum if gender1==0 & nordic==1
+	tab ddusedum if gender1==1 & nordic==1
+	
+	* forget time dummy
+	gen forgetdigitaldum=1 if forgetdigital>2 & forgetdigital!=.
+		replace forgetdigitaldum=0 if forgetdigital<=2 & forgetdigital!=.
+		
+	tab forgetdigitaldum if gender1==0 & nordic==1
+	tab forgetdigitaldum if gender1==1 & nordic==1
+				
+	* life satisfaction and social media use
+
+	reg slifesatisfaction devicesocialmedia country3 gender1 belong wealth emosup if nordic==1
+	reg slifesatisfaction devicesocialmedia country3 belong wealth emosup if gender1==0
+	reg slifesatisfaction devicesocialmedia country3 belong wealth emosup if gender1==1
+	
+	
+	reg feellonely devicesocialmedia country3 gender1 wealth emosup if nordic==1
+
+	reg slifesatisfaction devicesocialmedia if emosuptile==1 & nordic==1
+	reg slifesatisfaction devicesocialmedia if emosuptile==4 & nordic==1
+
+		* boys
+		reg slifesatisfaction devicesocialmedia country3 belong wealth if emosuptile==1 & nordic==1 & gender1==0		
+		reg slifesatisfaction devicesocialmedia country3 belong wealth if emosuptile==4 & nordic==1 & gender1==0
+		
+		* girls
+		reg slifesatisfaction devicesocialmedia country3 belong wealth if emosuptile==1 & nordic==1 & gender1==1		
+		reg slifesatisfaction devicesocialmedia country3 belong wealth if emosuptile==4 & nordic==1 & gender1==1
+	
+	* extreme use
+	reg slifesatisfaction devicesocialmedia1 devicesocialmedia2 devicesocialmedia4 devicesocialmedia5 country3 gender1 belong wealth if nordic==1
+	reg slifesatisfaction devicesocialmedia1 devicesocialmedia2 devicesocialmedia4 devicesocialmedia5 country3 belong wealth if nordic==1 & gender1==0
+	reg slifesatisfaction devicesocialmedia1 devicesocialmedia2 devicesocialmedia4 devicesocialmedia5 country3 belong wealth if nordic==1 & gender1==1
+
+	reg slifesatisfaction devicesocialmedia country3 belong wealth if nordic==1 
+	reg aftersocial devicesocialmedia country3 belong wealth if nordic==1 & slifesatisfaction!=.
+	reg beforesocial devicesocialmedia country3 belong wealth if nordic==1 & slifesatisfaction!=.
+	reg aftersocial devicesocialmedia country2 country3 country5 country7 belong wealth if nordic==1 
+	reg beforesocial devicesocialmedia country2 country3 country5 country7 belong wealth if nordic==1 
+		
+	reg badinternet devicesocialmedia country3 country5 country6 country7 wealth if nordic==1 if gender2==0
+	
+	
+	reg slifesatisfaction devicesocialmedia country3 belong wealth emosup if gender1==0
+	reg slifesatisfaction devicesocialmedia country3 belong wealth emosup if gender1==1
+	
+		
+		
+		
+		
+	reg slifesatisfaction devicesocialmedia country3 gender1 belong wealth if emosuptile==1 & nordic==1
+	reg slifesatisfaction devicesocialmedia country3 gender1 belong wealth if emosuptile==4 & nordic==1
+	
+	reg slifesatisfaction devicesocialmedia country3 gender1 wealth if belongtile==1 & nordic==1
+	reg slifesatisfaction devicesocialmedia country3 gender1 wealth if belongtile==4 & nordic==1
+
+	reg slifesatisfaction devicesocialmedia country3 gender1 wealth if nordic==1
+	reg slifesatisfaction devicesocialmedia country3 gender1 belong wealth if nordic==1
+	reg slifesatisfaction devicesocialmedia country3 gender1 belong emosup wealth if nordic==1
+
+	reg slifesatisfaction devicesocialmedia country3 gender1 belong wealth if psum<11 & nordic==1
+	
+	reg lifesatisfaction emosup devicesocialmedia country3 gender1 belong wealth if nordic==1, beta
+	reg lifesatisfaction devicesocialmedia country3 gender1 belong wealth if nordic==1
+	
+	
+	reg feellonely devicesocialmedia country3 gender1 wealth 
+	reg feellonely devicesocialmedia country3 gender1 wealth belong
+	reg feellonely devicesocialmedia country3 gender1 wealth if nordic==0
+
+	reg feellonely devicesocialmedia country3 gender1 wealth if emosuptile1==1 & nordic==1
+	reg feellonely devicesocialmedia country3 gender1 wealth if emosuptile4==1 & nordic==1
+	
